@@ -8,6 +8,27 @@ use Illuminate\Html\FormBuilder;
 class LazyServiceProvider extends ServiceProvider
 {
     /**
+     * Perform post-registration booting of services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->publishes([
+            __DIR__.'/js' => app()->basePath().DIRECTORY_SEPARATOR.'resources/assets/js/vendor/samjoyce777/lazy',
+        ], 'public');
+
+        $this->publishes([
+            __DIR__.'/config/lazy.php' => config_path('lazy.php'),
+        ], 'config');
+
+        if (! $this->app->routesAreCached()) {
+            require 'routes.php';
+        }
+    }
+
+
+    /**
      * Indicates if loading of the provider is deferred.
      *
      * @var bool
@@ -27,6 +48,10 @@ class LazyServiceProvider extends ServiceProvider
 
         $this->app->alias('lazy', 'samjoyce777\lazy\Lazy');
         $this->app->alias('form', 'Illuminate\Html\FormBuilder');
+
+        $config = require(__DIR__.'/config/lazy.php');
+
+        config($config);
     }
 
     /**
@@ -51,7 +76,7 @@ class LazyServiceProvider extends ServiceProvider
     {
         $this->app->bindShared('form', function($app)
         {
-            $form = new FormBuilder($app['html'], $app['url'], $app['session.store']->getToken());
+            $form = new FormBuilder($app['lazy'], $app['url'], $app['session.store']->getToken());
 
             return $form->setSessionStore($app['session.store']);
         });
@@ -64,7 +89,8 @@ class LazyServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array('html', 'form');
+        return array('lazy', 'form');
     }
+
 
 }
