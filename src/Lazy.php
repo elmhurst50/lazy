@@ -24,27 +24,43 @@ class Lazy extends HtmlBuilder
     {
         $attributes['alt'] = $alt;
 
-        if(config('lazy.method') == 'basic'){
+        if (config('lazy.method') == 'basic') {
             $attributes['data-lazy-image'] = $this->url->asset($url, $secure);
-        }else{
+        } else {
             $attributes['data-lazy-file'] = $url;
         }
 
-        if (isset($attributes['placeholder'])) {  //check to see if there is not a placeholder override
+        $placeholder = $this->getPlaceholder($attributes, $secure);
 
-            $placeholder = $this->url->asset($attributes['placeholder'], $secure);
+        unset($attributes['placeholder']);
 
-            unset($attributes['placeholder']);
-        } elseif (isset($attributes['class'])) { //check to see if there is not a class that requires seperate placeholder
+        return '<img src="' . $placeholder . '"' . $this->attributes($attributes) . '>';
+    }
+
+    /**
+     * Returns the placeholder file in order of priority
+     * @param $attributes
+     * @param $secure
+     * @return array
+     */
+    protected function getPlaceholder($attributes, $secure)
+    {
+        //check to see if there is not a placeholder override
+        if (isset($attributes['placeholder'])) {
+
+            return $this->url->asset($attributes['placeholder'], $secure);
+
+        }
+
+        //check to see if there is not a class that requires seperate placeholder
+        if (isset($attributes['class'])) {
 
             $classPlaceholder = $this->hasPlaceholderClass($attributes['class']);
 
-            if ($classPlaceholder != false) $placeholder = $this->url->asset($classPlaceholder, $secure);
-        } else {
-            $placeholder = $this->url->asset(config('lazy.placeholders.default'), $secure);
+            if ($classPlaceholder != false) return $this->url->asset($classPlaceholder, $secure);
         }
 
-        return '<img src="' . $placeholder . '"' . $this->attributes($attributes) . '>';
+        return $this->url->asset(config('lazy.placeholders.default'), $secure);
     }
 
 
@@ -66,4 +82,6 @@ class Lazy extends HtmlBuilder
 
         return false;
     }
+
+
 }
