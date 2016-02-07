@@ -24,10 +24,12 @@ class Lazy extends HtmlBuilder
     {
         $attributes['alt'] = $alt;
 
-        if (config('lazy.method') == 'basic') {
-            $attributes['data-lazy-image'] = $this->url->asset($url, $secure);
-        } else {
-            $attributes['data-lazy-file'] = $url;
+        switch (config('lazy.method')) {
+            case 'basic':
+                $attributes['data-lazy-image'] = $this->url->asset($url, $secure);
+                break;
+            default:
+                $attributes['data-lazy-file'] = $url;
         }
 
         $placeholder = $this->getPlaceholder($attributes, $secure);
