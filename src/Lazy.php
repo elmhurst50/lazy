@@ -24,7 +24,7 @@ class Lazy extends HtmlBuilder
     {
         $attributes['alt'] = $alt;
 
-        if(config('method') == 'basic'){
+        if(config('lazy.method') == 'basic'){
             $attributes['data-lazy-image'] = $this->url->asset($url, $secure);
         }else{
             $attributes['data-lazy-file'] = $url;
@@ -41,7 +41,7 @@ class Lazy extends HtmlBuilder
 
             if ($classPlaceholder != false) $placeholder = $this->url->asset($classPlaceholder, $secure);
         } else {
-            $placeholder = $this->url->asset(config('placeholders.default'), $secure);
+            $placeholder = $this->url->asset(config('lazy.placeholders.default'), $secure);
         }
 
         return '<img src="' . $placeholder . '"' . $this->attributes($attributes) . '>';
@@ -58,7 +58,7 @@ class Lazy extends HtmlBuilder
     {
         $classes = explode(' ', $classAttr);
 
-        $placeholders = config('placeholders.classes');
+        $placeholders = config('lazy.placeholders.classes');
 
         foreach ($placeholders as $key => $value) {
             if (in_array($key, $classes)) return $value;
