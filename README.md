@@ -1,4 +1,4 @@
-# Laravel Lazy Image Loader
+# Laravel 5 Lazy Image Loader
 
 This package changes the normal HTMLBuilder package image method to output the HTML that will be formatted in a way that can be lazy loaded.
 
@@ -6,6 +6,18 @@ This package changes the normal HTMLBuilder package image method to output the H
 
 ```sh
 $ composer install samjoyce777/lazy --save
+```
+
+In the config.php file you need to insert the service provider
+
+```sh
+$ \samjoyce777\lazy\LazyServiceProvider::class,
+```
+
+and then change the HTML facade to the new one, this class simply extends it so you have complete use of the other methods, it is only the image that has been overriden.
+
+```sh
+$ 'HTML' => samjoyce777\lazy\LazyFacade::class,
 ```
 
 You will need to get the javascript file, this goes to the public directory at the moment. You will then need to include or concat it.
